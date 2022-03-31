@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 
+
 pygame.init()
 # all fonts used
 font1 = pygame.font.SysFont("comicsansms", 49, True)
