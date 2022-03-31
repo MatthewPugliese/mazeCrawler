@@ -8,56 +8,6 @@ font1 = pygame.font.SysFont("comicsansms", 49, True)
 font2 = pygame.font.SysFont("comicsansms", 150, True)
 font3 = pygame.font.SysFont("comicsansms", 28, True)
 
-# # creates the string that displays time
-# def get_time(hours,minutes,seconds):
-#     if len(str(hours)) > 1:
-#         a = str(hours)
-#     else:
-#         a = "0" + str(hours)
-
-#     if len(str(minutes)) > 1:
-#         b = str(minutes)
-#     else:
-#         b = "0" + str(minutes)
-
-#     if len(str(seconds)) > 1:
-#         c = str(seconds)
-#     else:
-#         c = "0" + str(seconds)
-
-#     return a + ":" + b + ":" + c
-
-# # creates the time counter
-# def draw_time(start_time,pause_time):
-#     hours = 0
-#     minutes = 0
-#     seconds = 0
-#     current_time = time.time() - pause_time - start_time
-#     if current_time > 3600:
-#         while True:
-#             if current_time - 3600 > 0:
-#                 hours += 1
-#                 current_time -= 3600
-#             else:
-#                 while True:
-#                     if current_time - 60 > 0:
-#                         minutes += 1
-#                         current_time -= 60
-#                     else:
-#                         seconds += int(current_time)
-#                         break
-#                 break
-
-#     else:
-#         while True:
-#             if current_time - 60 > 0:
-#                 minutes += 1
-#                 current_time -= 60
-#             else:
-#                 seconds += int(current_time)
-#                 break
-
-#     return [font1.render(get_time(hours, minutes, seconds), True, (0, 0, 0), (255, 255, 255)), get_time(hours, minutes, seconds)]
 
 class cell:
     def __init__(self,up,down,left,right):
@@ -139,10 +89,8 @@ while running:
     color = (0, 128, 255) # color of the walls
     x = 16
     y = 16
-    x1 = 16
-    y1 = 16
-    #clock = pygame.time.Clock()
-    start = time.time()
+    #x1 = 16
+    #y1 = 16
     id += 1
     maze = labyrinth(id)
 
@@ -155,7 +103,7 @@ while running:
     goal = pygame.Rect(randomX+8,randomY+8,25,25)
 
     victory = False
-    speed = 4 # movement speed
+    speed = 3 # movement speed
     pause = False
     pause_time = 0 # time spent in pause menue
 
@@ -189,10 +137,14 @@ while running:
             move_down = True
             move_left = True
             move_right = True
+            # move_up1 = True
+            # move_down1 = True
+            # move_left1 = True
+            # move_right1 = True
             pressed = pygame.key.get_pressed()
 
             # movment
-            if  pressed[pygame.K_UP]:
+            if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
                 # checks if their is a overlap with the wall
                 for m in maze.maze_walls:
                     player = pygame.Rect(x, y - speed, 10, 10)
@@ -202,7 +154,7 @@ while running:
                 if move_up:
                     y -= speed
 
-            if  pressed[pygame.K_DOWN]:
+            if  pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
                 player = pygame.Rect(x, y + speed, 10, 10)
                 for m in maze.maze_walls:
                     if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -211,7 +163,7 @@ while running:
                 if move_down:
                     y += speed
 
-            if  pressed[pygame.K_LEFT]:
+            if  pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
                 player = pygame.Rect(x - speed, y, 10, 10)
                 for m in maze.maze_walls:
                     if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -220,7 +172,7 @@ while running:
                 if move_left:
                     x -= speed
 
-            if  pressed[pygame.K_RIGHT]:
+            if  pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
                 player = pygame.Rect(x + speed, y, 10, 10)
                 for m in maze.maze_walls:
                     if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -241,66 +193,63 @@ while running:
 
         # victory screen
         
-            if pressed[pygame.K_w]:
-                    # checks if their is a overlap with the wall
-                    for m in maze.maze_walls:
-                        player1 = pygame.Rect(x1, y1 - speed, 10, 10)
-                        if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
-                            move_up1 = False
-                            break
-                    if move_up1:
-                        y1 -= speed
+            # if pressed[pygame.K_w]:
+            #         # checks if their is a overlap with the wall
+            #         for m in maze.maze_walls:
+            #             player1 = pygame.Rect(x1, y1 - speed, 10, 10)
+            #             if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
+            #                 move_up1 = False
+            #                 break
+            #         if move_up1:
+            #             y1 -= speed
 
-            if pressed[pygame.K_s]:
-                player1 = pygame.Rect(x1, y1 + speed, 10, 10)
-                for m in maze.maze_walls:
-                    if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
-                        move_down1 = False
-                        break
-                if move_down1:
-                    y1 += speed
+            # if pressed[pygame.K_s]:
+            #     player1 = pygame.Rect(x1, y1 + speed, 10, 10)
+            #     for m in maze.maze_walls:
+            #         if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
+            #             move_down1 = False
+            #             break
+            #     if move_down1:
+            #         y1 += speed
 
-            if pressed[pygame.K_a]:
-                player1 = pygame.Rect(x - speed, y, 10, 10)
-                for m in maze.maze_walls:
-                    if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
-                        move_left1 = False
-                        break
-                if move_left1:
-                    x1 -= speed
+            # if pressed[pygame.K_a]:
+            #     player1 = pygame.Rect(x1 - speed, y1, 10, 10)
+            #     for m in maze.maze_walls:
+            #         if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
+            #             move_left1 = False
+            #             break
+            #     if move_left1:
+            #         x1 -= speed
 
-            if pressed[pygame.K_d]:
-                player1 = pygame.Rect(x + speed, y, 10, 10)
-                for m in maze.maze_walls:
-                    if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
-                        move_right1 = False
-                        break
-                if move_right1:
-                    x1 += speed
+            # if pressed[pygame.K_d]:
+            #     player1 = pygame.Rect(x1 + speed, y1, 10, 10)
+            #     for m in maze.maze_walls:
+            #         if player1.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
+            #             move_right1 = False
+            #             break
+            #     if move_right1:
+            #         x1 += speed
 
-            # checks if player has reached the goal
-            if goal.colliderect((x, y, 10, 10)):
-                victory = True
+            # # checks if player has reached the goal
+            # if goal.colliderect((x, y, 10, 10)):
+            #     victory = True
 
-            if goal.colliderect((x1, y1, 10, 10)):
-                victory = True
+            # if goal.colliderect((x1, y1, 10, 10)):
+            #     victory = True
 
             # draws the screen
             maze.draw(goal)
             #text = draw_time(start, pause_time)
-            pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
+            pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
+            #pygame.draw.rect(screen, (255,182,193), pygame.Rect(x1,y1,10,10))
             #screen.blit(text[0], (700, 15))
 
         # victory screen
         if victory:
             screen.fill((0, 0, 0))
-            #time_text = font1.render("Time Taken: " + text[1],True,(255,255,255))
             victory_text = font2.render("VICTORY!",True,(255,255,255))
             reset = font3.render("(Press Enter to Start New Game)",True,(255,255,255))
-
             screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
-            #screen.blit(time_text, (468 - (time_text.get_width() // 2), (248 - (time_text.get_height() // 2)) + victory_text.get_height()))
-            #screen.blit(reset, (468 - (reset.get_width() // 2), (248 - (reset.get_height() // 2)) + victory_text.get_height() + time_text.get_height()))
 
         #clock.tick(60)
         pygame.display.flip()
