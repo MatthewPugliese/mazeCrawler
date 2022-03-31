@@ -1,7 +1,8 @@
 import pygame
 import random
 import time
-import socket 
+import socket
+import pickle
 
 
 
@@ -81,6 +82,7 @@ randomX = randomX - toAddx
 randomY = randomY - toAddy
 goal = pygame.Rect(randomX+8,randomY+8,25,25)
 message = [maze,goal]
+message = pickle.dumps(message)
 
 
 def server_program():
@@ -93,8 +95,8 @@ def server_program():
     server_socket.listen(1)
     while True:
         conn, address = server_socket.accept()  # accept new connection
-        conn.send(message.encode())
-
+        conn.send(message)
+        
     conn.close()
 
 if __name__ == '__main__':

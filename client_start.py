@@ -1,7 +1,12 @@
+
 import pygame
 import random
 import time
 import socket
+import pickle
+from Server_start import labyrinth
+
+pygame.init()
 
 font1 = pygame.font.SysFont("comicsansms", 49, True)
 font2 = pygame.font.SysFont("comicsansms", 150, True)
@@ -18,15 +23,25 @@ pause_time = 0 # time spent in pause menue
 
 def client_program():
     host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
+    port = 2000  # socket server port number
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server 
-    data = client_socket.recv(1024).decode()  # receive response
+    data = b""
+    while True:
+        packet = client_socket.recv(4096)
+        if packet is None:
+            print("NONE")
+            break
+        data += packet
+
+    data_arr= pickle.loads(data)
+    print(data_arr)
     client_socket.close() 
     return data # close the connection
 
 data = client_program()
+print(data)
 maze = data[0]
 goal = data[1]
 while not done:
