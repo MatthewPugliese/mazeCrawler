@@ -65,6 +65,13 @@ class labyrinth:
             for i in range(0,1395,33):
                 self.maze_walls.append((i, j, 8, 8))
 
+    def draw(self, goal):
+        screen.fill((0, 0, 0))
+        for k in self.maze_walls:
+            pygame.draw.rect(screen, color, pygame.Rect(k[0],k[1],k[2],k[3]))
+
+        pygame.display.flip()
+
 screen = pygame.display.set_mode((1395, 1100))
 done = False
 color = (0, 128, 255) # color of the walls
@@ -85,3 +92,6 @@ def getMaze():
     
 def getGoal():
     return goal
+
+def getWalls():
+    return maze.maze_walls
