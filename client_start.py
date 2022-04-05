@@ -27,7 +27,8 @@ def client_program():
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server 
-    data = b""
+    data = b''
+
     while True:
         packet = client_socket.recv(4096)
         if packet is None:
@@ -38,9 +39,10 @@ def client_program():
     data_arr= pickle.loads(data)
     print(data_arr)
     client_socket.close() 
-    return data # close the connection
+    return data_arr # close the connection
 
 data = client_program()
+print("data")
 print(data)
 maze = data[0]
 goal = data[1]
