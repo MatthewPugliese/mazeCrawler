@@ -29,13 +29,12 @@ def client_program():
     client_socket.connect((host, port))  # connect to the server 
     data = b''
 
-    while True:
+    while b"746869736973746865656e64" not in data:
         packet = client_socket.recv(4096)
-        if packet is None:
-            print("NONE")
-            break
+        print(packet)
         data += packet
 
+    print("all data recieved")
     data_arr= pickle.loads(data)
     print(data_arr)
     client_socket.close() 
@@ -45,7 +44,9 @@ data = client_program()
 print("data")
 print(data)
 maze = data[0]
+print(maze, "maze")
 goal = data[1]
+print(goal, "goal")
 while not done:
     for event in pygame.event.get():
 
