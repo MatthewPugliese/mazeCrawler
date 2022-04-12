@@ -37,6 +37,7 @@ def client_program():
     print("all data recieved")
     data_arr= pickle.loads(data)
     print(data_arr)
+    #client_socket.send(b"test")
     client_socket.close() 
     return data_arr # close the connection
 
@@ -47,6 +48,8 @@ maze = data[0]
 print(maze, "maze")
 goal = data[1]
 print(goal, "goal")
+
+
 while not done:
     for event in pygame.event.get():
 
@@ -119,7 +122,7 @@ while not done:
 
             # checks if player has reached the goal
         if goal.colliderect((x, y, 10, 10)):
-                victory = True
+            victory = True
 
             # draws the screen
         maze.draw(goal)
