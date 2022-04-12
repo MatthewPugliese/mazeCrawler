@@ -70,7 +70,7 @@ class labyrinth:
         for k in self.maze_walls:
             pygame.draw.rect(screen, color, pygame.Rect(k[0],k[1],k[2],k[3]))
 
-        pygame.display.flip()
+        #pygame.display.flip()
         pygame.draw.rect(screen, (0, 255, 0), goal) # finish
 
 screen = pygame.display.set_mode((1395, 1100))
