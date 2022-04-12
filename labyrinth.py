@@ -71,6 +71,7 @@ class labyrinth:
             pygame.draw.rect(screen, color, pygame.Rect(k[0],k[1],k[2],k[3]))
 
         pygame.display.flip()
+        pygame.draw.rect(screen, (0, 255, 0), goal) # finish
 
 screen = pygame.display.set_mode((1395, 1100))
 done = False
@@ -84,7 +85,6 @@ toAddy = randomY%33
 randomX = randomX - toAddx 
 randomY = randomY - toAddy
 goal = pygame.Rect(randomX+8,randomY+8,25,25)
-
 
 
 def getMaze():
