@@ -15,6 +15,11 @@ def server_program():
     screen = pygame.display.set_mode((1395, 1100))
     screen.fill((0, 0, 0))
     color = (0, 128, 255)
+    maze.draw(goal)
+    #pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(16,16,10,10))
+    pygame.display.flip()
+
+
     print("2")
     message = [maze,goal]
     message = pickle.dumps(message)
@@ -44,11 +49,9 @@ def server_program():
             data += packet
         cord_array = pickle.loads(data)
         print(cord_array)
-        #pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
-        #pygame.display.flip()
-        maze.draw(goal)
         pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
         pygame.display.flip()
+        maze.draw(goal)
 
 
         
