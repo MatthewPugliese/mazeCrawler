@@ -42,16 +42,21 @@ def server_program():
         conn, address = server_socket.accept()  # accept new connection
         conn.send(message) #the maze and goal are sent to the client
         cords = conn.recv(4096)
+        print("test")
         data = b''
         while b"746869736973746865656e647373737373737373" not in data:
+            print("test2")
             packet = conn.recv(4096)
             print(packet)
             data += packet
+            print("test3")
+        print("test4")
         cord_array = pickle.loads(data)
         print(cord_array)
         pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
         pygame.display.flip()
         maze.draw(goal)
+        print("test 5")
 
 
         
