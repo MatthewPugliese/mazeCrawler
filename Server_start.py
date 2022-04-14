@@ -7,6 +7,7 @@ import labyrinth
 
 
 def server_program():
+    pygame.init()
     maze = labyrinth.getMaze()
     goal = labyrinth.getGoal()
     maze_walls = labyrinth.getWalls()
@@ -14,9 +15,6 @@ def server_program():
     screen = pygame.display.set_mode((1395, 1100))
     screen.fill((0, 0, 0))
     color = (0, 128, 255)
-    #pygame.draw.rect(screen, (0, 255, 0), goal) # finish
-    #maze.draw(goal)
-    #pygame.draw.rect(screen, (138,43,226), pygame.Rect(16,16,10,10))
     print("2")
     message = [maze,goal]
     message = pickle.dumps(message)
@@ -27,15 +25,32 @@ def server_program():
     print("3")
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, port))  # bind host address and port together
-    server_socket.listen(1)
+    server_socket.listen(5)
     #conn, address = server_socket.accept()  # accept new connection
     #conn.send(message)
     print("4")
     #conn.close()
+    
+
 
     while True:
         conn, address = server_socket.accept()  # accept new connection
-        conn.send(message)
+        conn.send(message) #the maze and goal are sent to the client
+        cords = conn.recv(4096)
+        data = b''
+        while b"746869736973746865656e647373737373737373" not in data:
+            packet = conn.recv(4096)
+            print(packet)
+            data += packet
+        cord_array = pickle.loads(data)
+        print(cord_array)
+        #pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
+        #pygame.display.flip()
+        maze.draw(goal)
+        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
+        pygame.display.flip()
+
+
         
     conn.close()
 

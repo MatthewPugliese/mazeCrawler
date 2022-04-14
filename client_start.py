@@ -21,12 +21,14 @@ speed = 3 # movement speed
 pause = False
 pause_time = 0 # time spent in pause menue
 
-def client_program():
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 2000  # socket server port number
 
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server 
+
+host = socket.gethostname()  # as both code is running on same pc
+port = 2000  # socket server port number
+client_socket = socket.socket()  # instantiate
+client_socket.connect((host, port))  # connect to the server 
+
+def client_program(client_socket):
     data = b''
 
     while b"746869736973746865656e64" not in data:
@@ -37,11 +39,12 @@ def client_program():
     print("all data recieved")
     data_arr= pickle.loads(data)
     print(data_arr)
-    #client_socket.send(b"test")
-    client_socket.close() 
+    client_socket.send(b"test")
+    #client_socket.close() 
+
     return data_arr # close the connection
 
-data = client_program()
+data = client_program(client_socket)
 print("data")
 print(data)
 maze = data[0]
@@ -123,21 +126,24 @@ while not done:
             # checks if player has reached the goal
         if goal.colliderect((x, y, 10, 10)):
             victory = True
-
             # draws the screen
+        
+        print(client_socket, " is the client_socket")
+        cords = [x,y]
+        cords = pickle.dumps(cords)
+        cords += b"746869736973746865656e647373737373737373"
+        client_socket.send(cords)
+        print("sent cords")
+
         maze.draw(goal)
             #text = draw_time(start, pause_time)
         pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
-            #screen.blit(text[0], (700, 15))
-            
-
             # draws the screen
-        maze.draw(goal)
+        #maze.draw(goal)
             #text = draw_time(start, pause_time)
-        pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
+        #pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
             #pygame.draw.rect(screen, (255,182,193), pygame.Rect(x1,y1,10,10))
             #screen.blit(text[0], (700, 15))
-
         # victory screen
     if victory:
         screen.fill((0, 0, 0))
