@@ -4,7 +4,7 @@ import time
 import socket
 import pickle
 import labyrinth
-
+import concurrent.futures
 
 def server_program():
     pygame.init()
@@ -35,25 +35,31 @@ def server_program():
     #conn.send(message)
     print("4")
     #conn.close()
-    
-    conn, address = server_socket.accept()  # accept new connection
-    conn.send(message) #the maze and goal are sent to the client
-    while True:
-        cords = conn.recv(4096)
-        data = b''
-        while b"746869736973746865656e647373737373737373" not in data:
-            packet = conn.recv(4096)
-            print(packet)
-            data += packet
-        cord_array = pickle.loads(data)
-        print(cord_array)
-        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
-        pygame.display.flip()
-        maze.draw(goal)
 
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        while True:
+            client_sock, client_addr = server_socket.accept()
+            client_sock.send(message) #the maze and goal are sent to the client
+            executor.submit(handle_client, client_sock, maze, goal, screen)
+            
 
-        
-    conn.close()
+    server_socket.close()
+
+    return    
+
+def handle_client(sock, maze, goal, screen):
+    cords = sock.recv(4096)
+    data = b''
+    while b"746869736973746865656e647373737373737373" not in data:
+        packet = sock.recv(4096)
+        print(packet)
+        data += packet
+    cord_array = pickle.loads(data)
+    print(cord_array)
+    pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
+    pygame.display.flip()
+    maze.draw(goal)
+
 
 if __name__ == '__main__':
     server_program()
