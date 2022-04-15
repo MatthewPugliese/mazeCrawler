@@ -39,26 +39,27 @@ def server_program():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         while True:
             client_sock, client_addr = server_socket.accept()
-            client_sock.send(message) #the maze and goal are sent to the client
-            executor.submit(handle_client, client_sock, maze, goal, screen)
+            executor.submit(handle_client, client_sock, maze, goal, screen, message)
             
 
     server_socket.close()
 
     return    
 
-def handle_client(sock, maze, goal, screen):
-    cords = sock.recv(4096)
-    data = b''
-    while b"746869736973746865656e647373737373737373" not in data:
-        packet = sock.recv(4096)
-        print(packet)
-        data += packet
-    cord_array = pickle.loads(data)
-    print(cord_array)
-    pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
-    pygame.display.flip()
-    maze.draw(goal)
+def handle_client(sock, maze, goal, screen, message):
+    sock.send(message) #the maze and goal are sent to the client
+    while True:
+        cords = sock.recv(4096)
+        data = b''
+        while b"746869736973746865656e647373737373737373" not in data:
+            packet = sock.recv(4096)
+            print(packet)
+            data += packet
+        cord_array = pickle.loads(data)
+        print(cord_array)
+        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(cord_array[0],cord_array[1],10,10))
+        pygame.display.flip()
+        maze.draw(goal)
 
 
 if __name__ == '__main__':
