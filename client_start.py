@@ -147,7 +147,7 @@ while not done:
         #pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
             #pygame.draw.rect(screen, (255,182,193), pygame.Rect(x1,y1,10,10))
             #screen.blit(text[0], (700, 15))
-        # victory scree
+        # victory screen
     if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
