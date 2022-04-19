@@ -21,7 +21,6 @@ def server_program():
     #pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(16,16,10,10))
     pygame.display.flip()
 
-#here is a comment
 
     print("2")
     message = [maze,goal]
