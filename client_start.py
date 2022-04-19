@@ -39,7 +39,7 @@ def client_program(client_socket):
     print("all data recieved")
     data_arr= pickle.loads(data)
     print(data_arr)
-    client_socket.send(b"test")
+    #client_socket.send(b"test")
     #client_socket.close() 
 
     return data_arr # close the connection
