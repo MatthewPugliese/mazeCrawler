@@ -8,6 +8,7 @@ import concurrent.futures
 
 def server_program():
     pygame.init()
+    pygame.display.set_caption('Server')
     maze = labyrinth.getMaze()
     goal = labyrinth.getGoal()
     maze_walls = labyrinth.getWalls()
