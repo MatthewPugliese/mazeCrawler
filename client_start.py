@@ -131,7 +131,7 @@ while not done:
             # draws the screen
         
         print(client_socket, " is the client_socket")
-        if not oldX == x and oldY == y:
+        if not oldX == x or not oldY == y:
             cords = [x,y]
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
