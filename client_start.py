@@ -54,6 +54,8 @@ print(goal, "goal")
 
 
 while not done:
+    oldX = x
+    oldY= y
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
@@ -129,11 +131,12 @@ while not done:
             # draws the screen
         
         print(client_socket, " is the client_socket")
-        cords = [x,y]
-        cords = pickle.dumps(cords)
-        cords += b"746869736973746865656e647373737373737373"
-        client_socket.send(cords)
-        print("sent cords")
+        if not oldX == x and oldY == y:
+            cords = [x,y]
+            cords = pickle.dumps(cords)
+            cords += b"746869736973746865656e647373737373737373"
+            client_socket.send(cords)
+            print("sent cords")
 
         maze.draw(goal)
             #text = draw_time(start, pause_time)
