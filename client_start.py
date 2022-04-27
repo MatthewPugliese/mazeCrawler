@@ -1,18 +1,11 @@
-
 import pygame
 import random
 import time
 import socket
-import pickle 
+import pickle
+import threading
+import queue
 from Server_start import labyrinth
-
-
-def draw_players(maze, goal, screen, dict):
-    print("drawing")
-    for player in dict.values():
-        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
-    maze.draw(goal)
-    return
 
 pygame.init()
 
@@ -27,15 +20,15 @@ y = 16
 victory = False
 speed = 3 # movement speed
 pause = False
-pause_time = 0
-first = True
+pause_time = 0 # time spent in pause menue
 
 
 
 host = socket.gethostname()  # as both code is running on same pc
-port = 2000  # socket server port number
+port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
+data_queue = queue.Queue()
 
 def client_program(client_socket):
     data = b''
@@ -53,6 +46,18 @@ def client_program(client_socket):
 
     return data_arr # close the connection
 
+def data_receiver(client_socket, queue):
+    print("test")
+    while(True):
+        data = b''
+        while b"746869736973746865656e64" not in data:
+            packet = client_socket.recv(4096)
+            print(packet)
+            data += packet
+
+        print("all data recieved")
+        queue.put(pickle.loads(data))
+
 data = client_program(client_socket)
 print("data")
 print(data)
@@ -60,7 +65,8 @@ maze = data[0]
 print(maze, "maze")
 goal = data[1]
 print(goal, "goal")
-
+data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
+data_receiver.start()
 
 while not done:
     oldX = x
@@ -139,9 +145,8 @@ while not done:
             victory = True
             # draws the screen
         
-        print(client_socket, " is the client_socket")
+        #print(client_socket, " is the client_socket")
         if not oldX == x or not oldY == y:
-            first = False
             cords = [x,y]
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
@@ -149,25 +154,27 @@ while not done:
             print("sent cords")
 
         maze.draw(goal)
-        if(first == False):
-            chord_data = b''
-            while b"746869736973746865656e64" not in chord_data:
-                print("tommy said so")
-                print("data is:", chord_data)
-                chords = client_socket.recv(4096)
-                print("recieved")
-                chord_data += chords
+            #text = draw_time(start, pause_time)
+        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
 
-            dict = pickle.loads(chord_data)
-            draw_players(maze, goal, screen, dict)
-        else: 
-             pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
+        coords = {}
+        try:
+            coords = data_queue.get_nowait()
+            print(coords)
+        except queue.Empty:
+            pass
 
-
-    
-        
-        #pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
-
+        #for player in coords.values():
+        #    pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
+        #pygame.display.flip() 
+        #maze.draw(goal)
+            # draws the screen
+        #maze.draw(goal)
+            #text = draw_time(start, pause_time)
+        #pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
+            #pygame.draw.rect(screen, (255,182,193), pygame.Rect(x1,y1,10,10))
+            #screen.blit(text[0], (700, 15))
+        # victory screen
     if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
