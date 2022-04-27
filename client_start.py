@@ -41,7 +41,7 @@ def client_program(client_socket):
     data = b''
 
     while b"746869736973746865656e64" not in data:
-        packet = client_socket.recv(4096)
+        packet = client_socket.recv(10)
         print(packet)
         data += packet
 
