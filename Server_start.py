@@ -43,16 +43,16 @@ def server_program():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         while True:
             client_sock, client_addr = server_socket.accept()
-            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, clientnum)
+            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, client_addr)
 
     server_socket.close()
 
     return    
 
-def handle_client(sock, maze, goal, screen, message, dict, clientnum):
+def handle_client(sock, maze, goal, screen, message, dict, client_addr):
     sock.send(message) #the maze and goal are sent to the client
     print("before")
-    clientnum = clientnum + 1
+    #clientnum = clientnum + 1
     while True:
         cords = sock.recv(4096)
         data = b''
@@ -63,7 +63,8 @@ def handle_client(sock, maze, goal, screen, message, dict, clientnum):
             print(packet)
             data += packet
         cord_array = pickle.loads(data)
-        dict[clientnum] = cord_array#
+        print(client_addr)
+        dict[client_addr] = cord_array#
         print(dict)
         
         draw_players(maze, goal, screen, dict, sock)

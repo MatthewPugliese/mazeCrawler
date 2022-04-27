@@ -153,7 +153,7 @@ while not done:
             client_socket.send(cords)
             print("sent cords")
 
-        maze.draw(goal)
+        #maze.draw(goal)
             #text = draw_time(start, pause_time)
         pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
 
@@ -161,9 +161,12 @@ while not done:
         try:
             coords = data_queue.get_nowait()
             print(coords)
+            for player in coords.values():
+                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         except queue.Empty:
             pass
-
+        pygame.display.flip() 
+        maze.draw(goal)
         #for player in coords.values():
         #    pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         #pygame.display.flip() 
