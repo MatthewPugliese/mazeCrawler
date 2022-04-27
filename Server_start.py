@@ -42,7 +42,7 @@ def server_program():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         while True:
             client_sock, client_addr = server_socket.accept()
-            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, client_addr, socket_pair)
+            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, client_addr, socket_pair) 
 
     server_socket.close()
 
