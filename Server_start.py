@@ -8,7 +8,7 @@ import concurrent.futures
 
 def server_program():
     player_Chords = {}
-    socket_pair = {}
+    clientnum = 0
     pygame.init()
     pygame.display.set_caption('Server')
     maze = labyrinth.getMaze()
@@ -23,13 +23,14 @@ def server_program():
     pygame.display.flip()
 
 
+
     print("2")
     message = [maze,goal]
     message = pickle.dumps(message)
     message += b"746869736973746865656e64"
     # get the hostname
     host = socket.gethostname()
-    port = 2000  # initiate port no above 1024
+    port = 2001  # initiate port no above 1024
     print("3")
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, port))  # bind host address and port together
@@ -42,15 +43,16 @@ def server_program():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         while True:
             client_sock, client_addr = server_socket.accept()
-            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, client_addr, socket_pair) 
+            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, client_addr)
 
     server_socket.close()
 
     return    
 
-def handle_client(sock, maze, goal, screen, message, dict, addr, socket_pair ):
+def handle_client(sock, maze, goal, screen, message, dict, client_addr):
     sock.send(message) #the maze and goal are sent to the client
-    print("maze sent to client")
+    print("before")
+    #clientnum = clientnum + 1
     while True:
         cords = sock.recv(4096)
         data = b''
@@ -58,25 +60,24 @@ def handle_client(sock, maze, goal, screen, message, dict, addr, socket_pair ):
             packet = sock.recv(4096)
             if packet == b'':
                 return
+            print(packet)
             data += packet
-        print("got all data")
         cord_array = pickle.loads(data)
-        dict[addr] = cord_array
-        socket_pair[addr] = sock
-        #use the tuple that comes from connecting the client to store the cordinates and create a second dictionary that also stores the socket.
-        draw_players(maze, goal, screen, dict, socket_pair)
+        print(client_addr)
+        dict[client_addr] = cord_array#
+        print(dict)
+        
+        draw_players(maze, goal, screen, dict, sock)
 
-def draw_players(maze, goal, screen, dict, socket_pair):
-    cord_msg = pickle.dumps(dict)
-    cord_msg += b"746869736973746865656e64"
+def draw_players(maze, goal, screen, dict, sock):
     for player in dict.values():
         pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
-    for sockvar in socket_pair.values():
-        sockvar.sendall(cord_msg)
-        print("Sent to", sockvar)  #19.6 
     pygame.display.flip() 
     maze.draw(goal)
-    print("made it")  
+    cord_msg = pickle.dumps(dict)
+    cord_msg += b"746869736973746865656e64"
+    sock.send(cord_msg)
+    #print("made it")  
 
 if __name__ == '__main__':
     server_program()
