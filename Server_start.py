@@ -8,6 +8,7 @@ import concurrent.futures
 
 def server_program():
     player_Chords = {}
+    socket_pair = {}
     pygame.init()
     pygame.display.set_caption('Server')
     maze = labyrinth.getMaze()
@@ -41,14 +42,15 @@ def server_program():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         while True:
             client_sock, client_addr = server_socket.accept()
-            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords)
+            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords, client_addr, socket_pair)
 
     server_socket.close()
 
     return    
 
-def handle_client(sock, maze, goal, screen, message, dict):
+def handle_client(sock, maze, goal, screen, message, dict, addr, socket_pair ):
     sock.send(message) #the maze and goal are sent to the client
+    print("maze sent to client")
     while True:
         cords = sock.recv(4096)
         data = b''
@@ -56,16 +58,22 @@ def handle_client(sock, maze, goal, screen, message, dict):
             packet = sock.recv(4096)
             if packet == b'':
                 return
-            print(packet)
             data += packet
+        print("got all data")
         cord_array = pickle.loads(data)
-        dict[sock] = cord_array
-        print(dict)
-        draw_players(maze, goal, screen, dict)
+        dict[addr] = cord_array
+        socket_pair[addr] = sock
+        #use the tuple that comes from connecting the client to store the cordinates and create a second dictionary that also stores the socket.
+        draw_players(maze, goal, screen, dict, socket_pair)
 
-def draw_players(maze, goal, screen, dict):
+def draw_players(maze, goal, screen, dict, socket_pair):
+    cord_msg = pickle.dumps(dict)
+    cord_msg += b"746869736973746865656e64"
     for player in dict.values():
         pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
+    for sockvar in socket_pair.values():
+        sockvar.sendall(cord_msg)
+        print("Sent to", sockvar)  #19.6 
     pygame.display.flip() 
     maze.draw(goal)
     print("made it")  
