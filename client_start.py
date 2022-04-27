@@ -3,7 +3,7 @@ import pygame
 import random
 import time
 import socket
-import pickle
+import pickle 
 from Server_start import labyrinth
 
 
