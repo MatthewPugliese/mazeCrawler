@@ -23,7 +23,7 @@ pause = False
 pause_time = 0 # time spent in pause menue
 
 
-
+#'149.43.218.169'
 host = socket.gethostname()  # as both code is running on same pc
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
@@ -94,7 +94,7 @@ while not done:
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
-        # the actual game
+    # the actual game
     if not victory and not pause:
         move_up = True
         move_down = True
@@ -102,9 +102,9 @@ while not done:
         move_right = True
         pressed = pygame.key.get_pressed()
 
-            # movment
+        # movment
         if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
-                # checks if their is a overlap with the wall
+            # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -145,16 +145,11 @@ while not done:
             victory = True
             # draws the screen
         
-        #print(client_socket, " is the client_socket")
         if not oldX == x or not oldY == y:
             cords = [x,y]
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
-            print("sent cords")
-
-        #maze.draw(goal)
-            #text = draw_time(start, pause_time)
 
         try:
             coords = data_queue.get_nowait()
@@ -164,22 +159,11 @@ while not done:
             pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
-        #for player in coords.values():
-        #    pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
-        #pygame.display.flip() 
-        #maze.draw(goal)
-            # draws the screen
-        #maze.draw(goal)
-            #text = draw_time(start, pause_time)
-        #pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
-            #pygame.draw.rect(screen, (255,182,193), pygame.Rect(x1,y1,10,10))
-            #screen.blit(text[0], (700, 15))
-        # victory screen
+
+    # victory screen
     if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         reset = font3.render("(Press Enter to Start New Game)",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
-
-        #clock.tick(60)
-    #pygame.display.flip()
+        pygame.display.flip()
