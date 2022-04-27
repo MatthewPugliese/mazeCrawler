@@ -67,7 +67,7 @@ goal = data[1]
 print(goal, "goal")
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
-
+coords = {}
 while not done:
     oldX = x
     oldY= y
@@ -155,16 +155,13 @@ while not done:
 
         #maze.draw(goal)
             #text = draw_time(start, pause_time)
-        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
 
-        coords = {}
         try:
             coords = data_queue.get_nowait()
-            print(coords)
-            for player in coords.values():
-                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         except queue.Empty:
             pass
+        for player in coords.values():
+            pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
         #for player in coords.values():
@@ -185,4 +182,4 @@ while not done:
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
 
         #clock.tick(60)
-    pygame.display.flip()
+    #pygame.display.flip()
