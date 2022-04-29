@@ -1,6 +1,5 @@
 
 import pygame
-import random
 import time
 import socket
 import pickle
@@ -36,39 +35,30 @@ def client_program(client_socket):
 
     while b"746869736973746865656e64" not in data:
         packet = client_socket.recv(4096)
-        print(packet)
         data += packet
 
-    print("all data recieved")
     data_arr= pickle.loads(data)
-    print(data_arr)
-    client_socket.send(b"test")
     #client_socket.close() 
 
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
-    print("test")
+    count = 0
     while(True):
         data = b''
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
-            print(packet)
             data += packet
-
-        print("all data recieved")
+        print("updated chords:", count)
+        count += 1
         queue.put(pickle.loads(data))
 
 data = client_program(client_socket)
-print("data")
-print(data)
 maze = data[0]
-print(maze, "maze")
 goal = data[1]
-print(goal, "goal")
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
-
+coords = {}
 while not done:
     oldX = x
     oldY= y
@@ -146,44 +136,26 @@ while not done:
             victory = True
             # draws the screen
         
-        #print(client_socket, " is the client_socket")
         if not oldX == x or not oldY == y:
             cords = [x,y]
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
-            print("sent cords")
 
-        #maze.draw(goal)
-            #text = draw_time(start, pause_time)
-        pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(x,y,10,10))
-
-        coords = {}
         try:
             coords = data_queue.get_nowait()
-            print(coords)
-            for player in coords.values():
-                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         except queue.Empty:
             pass
+        for player in coords.values():
+                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
-        #for player in coords.values():
-        #    pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
-        #pygame.display.flip() 
-        #maze.draw(goal)
-            # draws the screen
-        #maze.draw(goal)
-            #text = draw_time(start, pause_time)
-        #pygame.draw.rect(screen, (138,43,226), pygame.Rect(x,y,10,10))
-            #pygame.draw.rect(screen, (255,182,193), pygame.Rect(x1,y1,10,10))
-            #screen.blit(text[0], (700, 15))
-        # victory screen
+
     if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         reset = font3.render("(Press Enter to Start New Game)",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
+        pygame.display.flip()
 
-        #clock.tick(60)
-    pygame.display.flip()
+    #pygame.display.flip()
