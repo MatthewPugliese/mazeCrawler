@@ -1,5 +1,4 @@
 import pygame
-import random
 import time
 import socket
 import pickle
@@ -23,7 +22,7 @@ pause = False
 pause_time = 0 # time spent in pause menue
 
 
-#'149.43.218.169'
+
 host = socket.gethostname()  # as both code is running on same pc
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
@@ -35,36 +34,27 @@ def client_program(client_socket):
 
     while b"746869736973746865656e64" not in data:
         packet = client_socket.recv(4096)
-        print(packet)
         data += packet
 
-    print("all data recieved")
     data_arr= pickle.loads(data)
-    print(data_arr)
-    client_socket.send(b"test")
     #client_socket.close() 
 
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
-    print("test")
+    count = 0
     while(True):
         data = b''
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
-            print(packet)
             data += packet
-
-        print("all data recieved")
+        print("updated chords:", count)
+        count += 1
         queue.put(pickle.loads(data))
 
 data = client_program(client_socket)
-print("data")
-print(data)
 maze = data[0]
-print(maze, "maze")
 goal = data[1]
-print(goal, "goal")
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
 coords = {}
@@ -94,7 +84,7 @@ while not done:
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
-    # the actual game
+        # the actual game
     if not victory and not pause:
         move_up = True
         move_down = True
@@ -102,9 +92,9 @@ while not done:
         move_right = True
         pressed = pygame.key.get_pressed()
 
-        # movment
+            # movment
         if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
-            # checks if their is a overlap with the wall
+                # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -156,14 +146,15 @@ while not done:
         except queue.Empty:
             pass
         for player in coords.values():
-            pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
+                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
 
-    # victory screen
     if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         reset = font3.render("(Press Enter to Start New Game)",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
         pygame.display.flip()
+
+    #pygame.display.flip()
