@@ -9,7 +9,7 @@ import random
 
 
 def data_receiver(client_socket, dict, client_addr):
-    player_color = [random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)]
+    player_color = random.choice([[189,30,30],[245,226,200],[24,32,111],[216,131,115],[255,46,204],[255,102,99],[224,255,79],[41,231,205],[255,173,5],[252,255,75],[106,15,73],[151,239,233],[137,99,186],[144,194,144],[84,66,142]])
     while(True):
         data = b''
         while b"746869736973746865656e647373737373737373" not in data:
@@ -20,6 +20,9 @@ def data_receiver(client_socket, dict, client_addr):
             #delete player 
             del dict[client_addr]
             print("client disconnected")
+        elif(cord_array == "win"):
+            print("winner")
+            dict[client_addr] = "win"
         else:
             cord_array.append(player_color)
             dict[client_addr] = cord_array
@@ -46,7 +49,7 @@ def server_program():
     host = "149.43.218.169"
     port = 2001  # initiate port no above 1024
     server_socket = socket.socket()  # get instance
-    server_socket.bind((socket.gethostname(), port))  # bind host address and port together
+    server_socket.bind((host, port))  # bind host address and port together
     server_socket.listen(5)
 
 
