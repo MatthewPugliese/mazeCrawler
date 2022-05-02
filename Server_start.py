@@ -13,7 +13,12 @@ def data_receiver(client_socket, dict, client_addr):
             packet = client_socket.recv(4096)
             data += packet
         cord_array = pickle.loads(data)
-        dict[client_addr] = cord_array
+        if(cord_array == "quit"):
+            #delete player 
+            del dict[client_addr]
+            print("client disconnected")
+        else:
+            dict[client_addr] = cord_array
 
 
 def server_program():
@@ -34,7 +39,7 @@ def server_program():
     message = [maze,goal]
     message = pickle.dumps(message)
     message += b"746869736973746865656e64"
-    host = socket.gethostname()
+    host = "149.43.218.169"
     port = 2001  # initiate port no above 1024
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, port))  # bind host address and port together
