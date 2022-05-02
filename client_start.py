@@ -8,7 +8,7 @@ from Server_start import labyrinth
 
 pygame.init()
 
-font1 = pygame.font.SysFont("comicsansms", 49, True)
+font1 = pygame.font.SysFont("comicsansms", 49, True) 
 font2 = pygame.font.SysFont("comicsansms", 150, True)
 font3 = pygame.font.SysFont("comicsansms", 28, True)
 screen = pygame.display.set_mode((1395, 1100))
