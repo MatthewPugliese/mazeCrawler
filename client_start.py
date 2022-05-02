@@ -163,7 +163,7 @@ while not done:
         except queue.Empty:
             pass
         for player in coords.values():
-                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
+            pygame.draw.rect(screen, (player[2][0],player[2][1],player[2][2]), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
 
