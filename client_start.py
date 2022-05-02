@@ -19,11 +19,14 @@ y = 16
 victory = False
 speed = 3 # movement speed
 pause = False
-pause_time = 0 # time spent in pause menue
+pause_time = 0 # time spent in pause menu
+latency = 0
+startTime = 0
 
 
 
-host = socket.gethostname()  # as both code is running on same pc
+
+host = "149.43.218.169"  # as both code is running on same pc
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
@@ -37,13 +40,12 @@ def client_program(client_socket):
         data += packet
 
     data_arr= pickle.loads(data)
-    #client_socket.close() 
 
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
     count = 0
-    while(True):
+    while(not done):
         data = b''
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
@@ -51,10 +53,18 @@ def data_receiver(client_socket, queue):
         print("updated chords:", count)
         count += 1
         queue.put(pickle.loads(data))
+        latency = time.time() - startTime #in seconds
+        latency = latency * 100 #in milliseconds
+        latency = str(latency)[:5]
+
+
+
+        print(latency, "ms of latency")
 
 data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
+Kill = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
 coords = {}
@@ -65,7 +75,12 @@ while not done:
 
         if event.type == pygame.QUIT:
             done = True
-            running = False
+            cords = "quit"
+            cords = pickle.dumps(cords)
+            cords += b"746869736973746865656e647373737373737373"
+            client_socket.send(cords)
+            pygame.display.quit()
+            pygame.quit()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
@@ -140,6 +155,8 @@ while not done:
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
+
+        startTime = time.time()     #####latency count
 
         try:
             coords = data_queue.get_nowait()
