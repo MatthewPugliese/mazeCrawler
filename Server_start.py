@@ -1,12 +1,15 @@
+from os import chroot
 import pygame
 import socket
 import pickle
 import labyrinth
 import concurrent.futures
 import time
+import random
 
 
 def data_receiver(client_socket, dict, client_addr):
+    player_color = [random.randint(0, 255),random.randint(0, 255),random.randint(0, 255)]
     while(True):
         data = b''
         while b"746869736973746865656e647373737373737373" not in data:
@@ -18,6 +21,7 @@ def data_receiver(client_socket, dict, client_addr):
             del dict[client_addr]
             print("client disconnected")
         else:
+            cord_array.append(player_color)
             dict[client_addr] = cord_array
 
 
