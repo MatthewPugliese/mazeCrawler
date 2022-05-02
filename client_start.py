@@ -56,14 +56,13 @@ def data_receiver(client_socket, queue):
         latency = time.time() - startTime #in seconds
         latency = latency * 100 #in milliseconds
         latency = str(latency)[:5]
-
-
-
         print(latency, "ms of latency")
+
 
 data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
+difficulty = data[2]
 Kill = False
 Loss = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
@@ -115,13 +114,15 @@ while not done:
         move_right = True
         pressed = pygame.key.get_pressed()
 
-            # movment
         if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
                 # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
                     move_up = False
+                    if(difficulty==True):
+                        x = 16
+                        y = 16
                     break
             if move_up:
                 y -= speed
@@ -131,6 +132,9 @@ while not done:
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
                     move_down = False
+                    if(difficulty==True):
+                        x = 16
+                        y = 16
                     break
             if move_down:
                 y += speed
@@ -140,6 +144,9 @@ while not done:
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
                     move_left = False
+                    if(difficulty==True):
+                        x = 16
+                        y = 16
                     break
             if move_left:
                 x -= speed
@@ -149,6 +156,9 @@ while not done:
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
                     move_right = False
+                    if(difficulty==True):
+                        x = 16
+                        y = 16
                     break
             if move_right:
                 x += speed

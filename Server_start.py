@@ -22,7 +22,6 @@ def data_receiver(client_socket, dict, client_addr, player_colors):
             del dict[client_addr]
             print("client disconnected")
         elif(cord_array == "win"):
-            print("winner")
             dict[client_addr] = "win"
         else:
             cord_array.append(player_color)
@@ -30,22 +29,14 @@ def data_receiver(client_socket, dict, client_addr, player_colors):
 
 
 def server_program():
-    pygame.init()
-    pygame.display.set_caption('Server')
     maze = labyrinth.getMaze()
     goal = labyrinth.getGoal()
-    maze_walls = labyrinth.getWalls()
-    screen = pygame.display.set_mode((1395, 1100))
-    screen.fill((0, 0, 0))
-    color = (0, 128, 255)
     player_colors = [[255,188,66],[216,17,89],[226,160,255],[183,255,216],[255,220,204],[251,99,118],[100,245,141],[255,202,58],[138,201,38],[247,99,0],[237,37,78],[3,252,86],[233,223,0]]
-    maze.draw(goal)
-    pygame.display.flip()
     player_Chords = {}
 
 
-
-    message = [maze,goal]
+    difficulty = False
+    message = [maze,goal,difficulty]
     message = pickle.dumps(message)
     message += b"746869736973746865656e64"
     host = "149.43.218.169"
