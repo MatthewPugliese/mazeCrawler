@@ -46,7 +46,7 @@ def server_program():
     host = "149.43.218.169"
     port = 2001  # initiate port no above 1024
     server_socket = socket.socket()  # get instance
-    server_socket.bind((host, port))  # bind host address and port together
+    server_socket.bind((socket.gethostname(), port))  # bind host address and port together
     server_socket.listen(5)
 
 
@@ -54,22 +54,18 @@ def server_program():
         while True:
             client_sock, client_addr = server_socket.accept()
             print("Client Connected")
-            executor.submit(handle_client, client_sock, maze, goal, screen, message, player_Chords)
+            executor.submit(handle_client, client_sock, message, player_Chords)
             executor.submit(data_receiver, client_sock, player_Chords, client_addr)
     
 
-def handle_client(sock, maze, goal, screen, message, dict):
+def handle_client(sock, message, dict):
     sock.send(message) #the maze and goal are sent to the client
     while True:
-            draw_players(maze, goal, screen, dict, sock)
+            draw_players(dict, sock)
             time.sleep(.03)
         
 
-def draw_players(maze, goal, screen, dict, sock):
-    # for player in dict.values():
-    #     pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
-    # pygame.display.flip() 
-    # maze.draw(goal)
+def draw_players(dict, sock):
     cord_msg = pickle.dumps(dict)
     cord_msg += b"746869736973746865656e64"
     sock.send(cord_msg) 

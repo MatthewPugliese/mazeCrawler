@@ -29,7 +29,7 @@ startTime = 0
 host = "149.43.218.169"  # as both code is running on same pc
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
-client_socket.connect((host, port))  # connect to the server 
+client_socket.connect((socket.gethostname(), port))  # connect to the server 
 data_queue = queue.Queue()
 
 def client_program(client_socket):
@@ -78,11 +78,12 @@ while not done:
             cords = "quit"
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
+            print("Thanks for playing <3 grapefruit")
             client_socket.send(cords)
             pygame.display.quit()
             pygame.quit()
 
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN and not done:
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                 if pause:
                     pause = False
@@ -94,13 +95,13 @@ while not done:
             if event.key == pygame.K_RETURN:
                 done = True
 
-    if pause:
+    if pause and not done:
         screen.fill((0, 0, 0))
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
         # the actual game
-    if not victory and not pause:
+    if not victory and not pause and not done:
         move_up = True
         move_down = True
         move_left = True
@@ -167,7 +168,7 @@ while not done:
         pygame.display.flip() 
         maze.draw(goal)
 
-    if victory:
+    if victory and not done:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         reset = font3.render("(Press Enter to Start New Game)",True,(255,255,255))
