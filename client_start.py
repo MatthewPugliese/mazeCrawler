@@ -1,4 +1,3 @@
-
 import pygame
 import time
 import socket
@@ -20,11 +19,14 @@ y = 16
 victory = False
 speed = 3 # movement speed
 pause = False
-pause_time = 0 # time spent in pause menue
+pause_time = 0 # time spent in pause menu
+latency = 0
+startTime = 0
 
 
 
-host = socket.gethostname()  # as both code is running on same pc
+
+host = "149.43.218.169"  # as both code is running on same pc
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
@@ -38,13 +40,12 @@ def client_program(client_socket):
         data += packet
 
     data_arr= pickle.loads(data)
-    #client_socket.close() 
 
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
     count = 0
-    while(True):
+    while(not done):
         data = b''
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
@@ -52,21 +53,42 @@ def data_receiver(client_socket, queue):
         print("updated chords:", count)
         count += 1
         queue.put(pickle.loads(data))
+        latency = time.time() - startTime #in seconds
+        latency = latency * 100 #in milliseconds
+        latency = str(latency)[:5]
+
+
+
+        print(latency, "ms of latency")
 
 data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
+Kill = False
+Loss = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
 coords = {}
 while not done:
+
+    if Loss:
+        screen.fill((0, 0, 0))
+        victory_text = font2.render("DEFEAT!",True,(255,255,255))
+        screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
+        pygame.display.flip()
+
     oldX = x
     oldY= y
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             done = True
-            running = False
+            cords = "quit"
+            cords = pickle.dumps(cords)
+            cords += b"746869736973746865656e647373737373737373"
+            client_socket.send(cords)
+            pygame.display.quit()
+            pygame.quit()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
@@ -86,7 +108,7 @@ while not done:
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
         # the actual game
-    if not victory and not pause:
+    if not victory and not pause and not Loss:
         move_up = True
         move_down = True
         move_left = True
@@ -142,20 +164,26 @@ while not done:
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
 
+        startTime = time.time()     #####latency count
+
         try:
             coords = data_queue.get_nowait()
         except queue.Empty:
             pass
         for player in coords.values():
-                pygame.draw.rect(screen, (255, 100, 0), pygame.Rect(player[0],player[1],10,10))
+            if(player == "win"):
+                Loss = True
+            else:
+                pygame.draw.rect(screen, (player[2][0],player[2][1],player[2][2]), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
 
     if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
-        reset = font3.render("(Press Enter to Start New Game)",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
+        cords = "win"
+        cords = pickle.dumps(cords)
+        cords += b"746869736973746865656e647373737373737373"
+        client_socket.send(cords)
         pygame.display.flip()
-
-    #pygame.display.flip()
