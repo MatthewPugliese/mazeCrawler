@@ -6,6 +6,10 @@ import threading
 import queue
 from Server_start import labyrinth
 
+print("Enter Server IP: ", end ="")
+host = input()
+print("Joining server at:" , host)
+
 pygame.init()
 pygame.mixer.init()
 pygame.mixer.music.load("The Mountaintop.mp3")
@@ -27,7 +31,9 @@ pause_time = 0 # time spent in pause menu
 latency = 0
 startTime = 0
 
-host = "149.43.218.169"  # as both code is running on same pc
+#host = "149.43.198.248"  # as both code is running on same pc
+
+
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
@@ -51,7 +57,7 @@ def data_receiver(client_socket, queue):
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
             data += packet
-        print("updated chords:", count)
+        #print("updated chords:", count)
         count += 1
         queue.put(pickle.loads(data))
         latency = time.time() - startTime #in seconds

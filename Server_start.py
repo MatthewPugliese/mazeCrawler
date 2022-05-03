@@ -39,7 +39,14 @@ def server_program():
     message = [maze,goal,difficulty]
     message = pickle.dumps(message)
     message += b"746869736973746865656e64"
-    host = "149.43.218.169"
+    #host = "149.43.198.248"
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    host = s.getsockname()[0]
+    print("Host IP is:", host)
+    
+
     port = 2001  # initiate port no above 1024
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, port))  # bind host address and port together
