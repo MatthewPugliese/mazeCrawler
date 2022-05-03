@@ -12,7 +12,7 @@ print("Joining server at:" , host)
 
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.music.load("The Mountaintop.mp3")
+pygame.mixer.music.load("mazeSong.mp3")
 pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play()
 
