@@ -7,6 +7,10 @@ import queue
 from Server_start import labyrinth
 
 pygame.init()
+pygame.mixer.init()
+pygame.mixer.music.load("The Mountaintop.mp3")
+pygame.mixer.music.set_volume(0.7)
+pygame.mixer.music.play()
 
 font1 = pygame.font.SysFont("comicsansms", 49, True) 
 font2 = pygame.font.SysFont("comicsansms", 150, True)
@@ -22,9 +26,6 @@ pause = False
 pause_time = 0 # time spent in pause menu
 latency = 0
 startTime = 0
-
-
-
 
 host = "149.43.218.169"  # as both code is running on same pc
 port = 2001  # socket server port number

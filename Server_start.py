@@ -35,7 +35,7 @@ def server_program():
     player_Chords = {}
 
 
-    difficulty = False
+    difficulty = True
     message = [maze,goal,difficulty]
     message = pickle.dumps(message)
     message += b"746869736973746865656e64"
