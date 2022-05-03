@@ -9,7 +9,7 @@ from Server_start import labyrinth
 pygame.init()
 pygame.mixer.init()
 pygame.mixer.music.load("The Mountaintop.mp3")
-pygame.mixer.music.set_volume(0.7)
+pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play()
 
 font1 = pygame.font.SysFont("comicsansms", 49, True) 
