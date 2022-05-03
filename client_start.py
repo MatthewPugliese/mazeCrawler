@@ -93,10 +93,11 @@ while not done:
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
+            print("Thanks for playing!")
             pygame.display.quit()
             pygame.quit()
 
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN and not done:
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                 if pause:
                     pause = False
@@ -108,13 +109,13 @@ while not done:
             if event.key == pygame.K_RETURN:
                 done = True
 
-    if pause:
+    if pause and not done:
         screen.fill((0, 0, 0))
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
         # the actual game
-    if not victory and not pause and not Loss:
+    if not victory and not pause and not Loss and not done:
         move_up = True
         move_down = True
         move_left = True
@@ -195,7 +196,7 @@ while not done:
         pygame.display.flip() 
         maze.draw(goal)
 
-    if victory:
+    if victory and not done:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
