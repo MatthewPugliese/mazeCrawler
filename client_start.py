@@ -34,7 +34,7 @@ startTime = 0
 #host = "149.43.198.248"  # as both code is running on same pc
 
 
-port = 2001  # socket server port number
+port = 2000  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
 data_queue = queue.Queue()
@@ -70,7 +70,7 @@ data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
 difficulty = data[2]
-Kill = False
+color = data[3]
 Loss = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
@@ -192,7 +192,7 @@ while not done:
             if(player == "win"):
                 Loss = True
             else:
-                pygame.draw.rect(screen, (player[2][0],player[2][1],player[2][2]), pygame.Rect(player[0],player[1],10,10))
+                pygame.draw.rect(screen, (color[0],color[1],color[2]), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
 
