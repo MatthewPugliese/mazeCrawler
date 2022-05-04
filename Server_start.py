@@ -4,6 +4,7 @@ import socket
 import pickle
 import labyrinth
 import concurrent.futures
+import threading
 import time
 import random
 
@@ -15,7 +16,8 @@ def server_program():
     goal = labyrinth.getGoal()
     player_colors = [[255,188,66],[216,17,89],[226,160,255],[183,255,216],[255,220,204],[251,99,118],[100,245,141],[255,202,58],[138,201,38],[247,99,0],[237,37,78],[3,252,86],[233,223,0]]
     player_coords = {}
-
+    
+    lock = threading.Lock()
     difficulty = False
     # same maze and goal for every client
     # maze, goal, difficulty all coded in message    
@@ -38,9 +40,9 @@ def server_program():
             client_sock, client_addr = server_socket.accept()
             print("Client Connected")
             executor.submit(handle_client, client_sock, message, player_coords, player_colors)
-            executor.submit(data_receiver, client_sock, player_coords, client_addr)
+            executor.submit(data_receiver, client_sock, player_coords, client_addr, lock)
 
-def data_receiver(client_socket, dict, client_addr):
+def data_receiver(client_socket, dict, client_addr, lock):
     """
     Threaded function to handle client coordinate updates
 
@@ -54,15 +56,23 @@ def data_receiver(client_socket, dict, client_addr):
         while b"746869736973746865656e647373737373737373" not in data:
             packet = client_socket.recv(4096)
             data += packet
+        lock.acquire()
         cord_array = pickle.loads(data)
+        lock.release()
         if(cord_array == "quit"):
-            #delete player 
+            #delete player
+            lock.acquire()
             del dict[client_addr]
+            lock.release()
             print("client disconnected")
         elif(cord_array == "win"):
+            lock.acquire()
             dict[client_addr] = "win"
+            lock.release()
         else:
+            lock.acquire()
             dict[client_addr] = cord_array
+            lock.release()
 
 def handle_client(sock, message, dict, player_colors):
     """
