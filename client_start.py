@@ -41,7 +41,7 @@ def client_program(client_socket):
     Principal function that receives the initial data from the server (maze, goal, color)
     """
     data = b''
-
+    # waits to receive entire message based on bytestring
     while b"746869736973746865656e64" not in data:
         packet = client_socket.recv(4096)
         data += packet
@@ -51,9 +51,18 @@ def client_program(client_socket):
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
+    """
+    Threaded function to handle client coordinate updates from server
+
+    :param client_socket: the socket the particular client is using
+    :param queue: queue containing the updates in order as received
+    """       
     count = 0
+
+    #loop for duration of game
     while(not done):
         data = b''
+        # wait to receive full message
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
             data += packet
@@ -68,7 +77,6 @@ data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
 difficulty = data[2]
-color = data[3]
 Loss = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
@@ -120,7 +128,7 @@ while not done:
         move_right = True
         pressed = pygame.key.get_pressed()
 
-        if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
+        if pressed[pygame.K_UP] or pressed[pygame.K_w]:
             # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
@@ -133,7 +141,7 @@ while not done:
             if move_up:
                 y -= speed
 
-        if  pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
+        if pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
             player = pygame.Rect(x, y + speed, 10, 10)
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -145,7 +153,7 @@ while not done:
             if move_down:
                 y += speed
 
-        if  pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
+        if pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
             player = pygame.Rect(x - speed, y, 10, 10)
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -157,7 +165,7 @@ while not done:
             if move_left:
                 x -= speed
 
-        if  pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
+        if pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
             player = pygame.Rect(x + speed, y, 10, 10)
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -189,7 +197,7 @@ while not done:
             if(player == "win"):
                 Loss = True
             else:
-                pygame.draw.rect(screen, (color[0],color[1],color[2]), pygame.Rect(player[0],player[1],10,10))
+                pygame.draw.rect(screen, (player[2][0],player[2][1],player[2][2]), pygame.Rect(player[0],player[1],10,10))
         pygame.display.flip() 
         maze.draw(goal)
 
