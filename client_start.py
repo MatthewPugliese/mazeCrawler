@@ -31,15 +31,15 @@ pause_time = 0 # time spent in pause menu
 latency = 0
 startTime = 0
 
-#host = "149.43.198.248"  # as both code is running on same pc
-
-
 port = 2000  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
 data_queue = queue.Queue()
 
 def client_program(client_socket):
+    """
+    Principal function that receives the initial data from the server (maze, goal, color)
+    """
     data = b''
 
     while b"746869736973746865656e64" not in data:
@@ -57,14 +57,12 @@ def data_receiver(client_socket, queue):
         while b"746869736973746865656e64" not in data:
             packet = client_socket.recv(4096)
             data += packet
-        #print("updated chords:", count)
         count += 1
         queue.put(pickle.loads(data))
         latency = time.time() - startTime #in seconds
         latency = latency * 100 #in milliseconds
         latency = str(latency)[:5]
         print(latency, "ms of latency")
-
 
 data = client_program(client_socket)
 maze = data[0]
@@ -114,7 +112,7 @@ while not done:
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
-        # the actual game
+    # the actual game
     if not victory and not pause and not Loss and not done:
         move_up = True
         move_down = True
@@ -123,7 +121,7 @@ while not done:
         pressed = pygame.key.get_pressed()
 
         if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
-                # checks if their is a overlap with the wall
+            # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -171,10 +169,9 @@ while not done:
             if move_right:
                 x += speed
 
-            # checks if player has reached the goal
+        # checks if player has reached the goal
         if goal.colliderect((x, y, 10, 10)):
             victory = True
-            # draws the screen
         
         if not oldX == x or not oldY == y:
             cords = [x,y]

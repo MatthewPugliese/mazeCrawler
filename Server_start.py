@@ -20,8 +20,6 @@ def server_program():
     # same maze and goal for every client
     # maze, goal, difficulty all coded in message    
     message = [maze,goal,difficulty]
-    #message = pickle.dumps(message)
-    #message += b"746869736973746865656e64"
 
     # dynamic hostname retreival
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -40,9 +38,9 @@ def server_program():
             client_sock, client_addr = server_socket.accept()
             print("Client Connected")
             executor.submit(handle_client, client_sock, message, player_coords, player_colors)
-            executor.submit(data_receiver, client_sock, player_coords, client_addr, player_colors)
+            executor.submit(data_receiver, client_sock, player_coords, client_addr)
 
-def data_receiver(client_socket, dict, client_addr, player_colors):
+def data_receiver(client_socket, dict, client_addr):
     """
     Threaded function to handle client coordinate updates
 
@@ -51,8 +49,6 @@ def data_receiver(client_socket, dict, client_addr, player_colors):
     :param client_addr: the IP address of a connection
     :param player_colors: array containing unique colors in RGB format
     """    
-    #player_color = random.choice(player_colors)
-    #player_colors.remove(player_color)
     while(True):
         data = b''
         while b"746869736973746865656e647373737373737373" not in data:
@@ -66,7 +62,6 @@ def data_receiver(client_socket, dict, client_addr, player_colors):
         elif(cord_array == "win"):
             dict[client_addr] = "win"
         else:
-            #cord_array.append(player_color)
             dict[client_addr] = cord_array
 
 def handle_client(sock, message, dict, player_colors):
