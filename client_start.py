@@ -30,17 +30,18 @@ pause_time = 0 # time spent in pause menu
 latency = 0
 startTime = 0
 
-#host = "149.43.198.248"  # as both code is running on same pc
-
-
 port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
 data_queue = queue.Queue()
 
 def client_program(client_socket):
+    """
+    Principal function that receives the initial data from the server (maze, goal, color)
+    """
     data = b''
 
+    # waits to receive entire message based on bytestring
     while b"746869736973746865656e64" not in data:
         packet = client_socket.recv(4096)
         data += packet
@@ -50,10 +51,18 @@ def client_program(client_socket):
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
+    """
+    Threaded function to handle client coordinate updates from server
+    :param client_socket: the socket the particular client is using
+    :param queue: queue containing the updates in order as received
+    """
     count = 0
+    
+    #loop for duration of game
     while(not done):
         data = b''
         try:
+            # wait to receive full message
             while b"746869736973746865656e64" not in data:
                 packet = client_socket.recv(4096)
                 data += packet
@@ -62,6 +71,7 @@ def data_receiver(client_socket, queue):
             stuff = pickle.loads(data)
             queue.put(stuff)
         except:
+            pass
         latency = time.time() - startTime #in seconds
         latency = latency * 100 #in milliseconds
         latency = str(latency)[:5]
@@ -72,7 +82,6 @@ data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
 difficulty = data[2]
-Kill = False
 Loss = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
@@ -98,7 +107,7 @@ while not done:
             pygame.display.quit()
             pygame.quit()
 
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN and not done:
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                 if pause:
                     pause = False
@@ -110,13 +119,13 @@ while not done:
             if event.key == pygame.K_RETURN:
                 done = True
 
-    if pause:
+    if pause and not done:
         screen.fill((0, 0, 0))
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
-        # the actual game
-    if not victory and not pause and not Loss:
+    # the actual game
+    if not victory and not pause and not Loss and not done:
         move_up = True
         move_down = True
         move_left = True
@@ -124,7 +133,7 @@ while not done:
         pressed = pygame.key.get_pressed()
 
         if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
-                # checks if their is a overlap with the wall
+            # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -197,7 +206,7 @@ while not done:
         pygame.display.flip() 
         maze.draw(goal)
 
-    if victory:
+    if victory and not done:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
