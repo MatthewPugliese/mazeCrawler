@@ -92,7 +92,7 @@ def data_receiver(client_socket, dict, client_addr, player_colors, lock):
         except:
             print("error in data_reciever")
             lock.release()
-            continue
+            break
         
 
 def handle_client(sock, message, dict, lock):
@@ -115,7 +115,9 @@ def handle_client(sock, message, dict, lock):
             lock.release()
             time.sleep(.03)
         except:
+            lock.release()
             print("error in handle_client")
+            break
 
 if __name__ == '__main__':
     server_program()

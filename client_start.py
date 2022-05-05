@@ -104,6 +104,7 @@ while not done:
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
+            print("Thanks for playing.")
             pygame.display.quit()
             pygame.quit()
 
