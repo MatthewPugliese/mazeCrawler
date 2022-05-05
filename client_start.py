@@ -4,7 +4,6 @@ import socket
 import pickle
 import threading
 import queue
-from Server_start import labyrinth
 
 print("Enter Server IP: ", end ="")
 host = input()
