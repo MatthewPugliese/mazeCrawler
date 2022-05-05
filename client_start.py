@@ -31,17 +31,17 @@ pause_time = 0 # time spent in pause menu
 latency = 0
 startTime = 0
 
-port = 2000  # socket server port number
+#host = "149.43.198.248"  # as both code is running on same pc
+
+
+port = 2001  # socket server port number
 client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server 
 data_queue = queue.Queue()
 
 def client_program(client_socket):
-    """
-    Principal function that receives the initial data from the server (maze, goal, color)
-    """
     data = b''
-    # waits to receive entire message based on bytestring
+
     while b"746869736973746865656e64" not in data:
         packet = client_socket.recv(4096)
         data += packet
@@ -51,32 +51,29 @@ def client_program(client_socket):
     return data_arr # close the connection
 
 def data_receiver(client_socket, queue):
-    """
-    Threaded function to handle client coordinate updates from server
-
-    :param client_socket: the socket the particular client is using
-    :param queue: queue containing the updates in order as received
-    """       
     count = 0
-
-    #loop for duration of game
     while(not done):
         data = b''
-        # wait to receive full message
-        while b"746869736973746865656e64" not in data:
-            packet = client_socket.recv(4096)
-            data += packet
-        count += 1
-        queue.put(pickle.loads(data))
+        try:
+            while b"746869736973746865656e64" not in data:
+                packet = client_socket.recv(4096)
+                data += packet
+            #print("updated chords:", count)
+            count += 1
+            stuff = pickle.loads(data)
+            queue.put(stuff)
+        except:
         latency = time.time() - startTime #in seconds
         latency = latency * 100 #in milliseconds
         latency = str(latency)[:5]
         print(latency, "ms of latency")
 
+
 data = client_program(client_socket)
 maze = data[0]
 goal = data[1]
 difficulty = data[2]
+Kill = False
 Loss = False
 data_receiver = threading.Thread(target=data_receiver, args=(client_socket, data_queue))
 data_receiver.start()
@@ -99,11 +96,10 @@ while not done:
             cords = pickle.dumps(cords)
             cords += b"746869736973746865656e647373737373737373"
             client_socket.send(cords)
-            print("Thanks for playing!")
             pygame.display.quit()
             pygame.quit()
 
-        if event.type == pygame.KEYDOWN and not done:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE or event.key == pygame.K_p:
                 if pause:
                     pause = False
@@ -115,21 +111,21 @@ while not done:
             if event.key == pygame.K_RETURN:
                 done = True
 
-    if pause and not done:
+    if pause:
         screen.fill((0, 0, 0))
         pause_text = font2.render("PAUSE",True,(255,255,255))
         screen.blit(pause_text, (700 - (pause_text.get_width() // 2), 550 - (pause_text.get_height() // 2)))
 
-    # the actual game
-    if not victory and not pause and not Loss and not done:
+        # the actual game
+    if not victory and not pause and not Loss:
         move_up = True
         move_down = True
         move_left = True
         move_right = True
         pressed = pygame.key.get_pressed()
 
-        if pressed[pygame.K_UP] or pressed[pygame.K_w]:
-            # checks if their is a overlap with the wall
+        if  pressed[pygame.K_UP] or pressed[pygame.K_w]:
+                # checks if their is a overlap with the wall
             for m in maze.maze_walls:
                 player = pygame.Rect(x, y - speed, 10, 10)
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -141,7 +137,7 @@ while not done:
             if move_up:
                 y -= speed
 
-        if pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
+        if  pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
             player = pygame.Rect(x, y + speed, 10, 10)
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -153,7 +149,7 @@ while not done:
             if move_down:
                 y += speed
 
-        if pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
+        if  pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
             player = pygame.Rect(x - speed, y, 10, 10)
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -165,7 +161,7 @@ while not done:
             if move_left:
                 x -= speed
 
-        if pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
+        if  pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
             player = pygame.Rect(x + speed, y, 10, 10)
             for m in maze.maze_walls:
                 if player.colliderect(pygame.Rect(m[0],m[1],m[2],m[3])):
@@ -177,9 +173,10 @@ while not done:
             if move_right:
                 x += speed
 
-        # checks if player has reached the goal
+            # checks if player has reached the goal
         if goal.colliderect((x, y, 10, 10)):
             victory = True
+            # draws the screen
         
         if not oldX == x or not oldY == y:
             cords = [x,y]
@@ -201,7 +198,7 @@ while not done:
         pygame.display.flip() 
         maze.draw(goal)
 
-    if victory and not done:
+    if victory:
         screen.fill((0, 0, 0))
         victory_text = font2.render("VICTORY!",True,(255,255,255))
         screen.blit(victory_text,(700 - (victory_text.get_width() // 2), 550 - (victory_text.get_height() // 2)))
