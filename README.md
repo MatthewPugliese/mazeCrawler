@@ -14,3 +14,8 @@ In order to run this on a machine of your own, there are a few things you should
 1. While playing the game, the controls are the arrow keys on your computer.
 1. If you decide to quit, just close the window to properly leave the game.
 1. There is no replay functionality built in, to play again you'll have to restart the server and reconnect the clients.
+
+# References
+1. Maze generation algorithm implementation based off: Joseph Bakulikira. 2021. Procedural Maze Generator Algorithms. GitHub. Retrieved March 25, 2022 from https://github.com/Josephbakulikira/Procedural-Maze-Generator-Algorithms
+1. Mihail Dumitrescu and Nihar Sharma. 2011. Robust Networking in Multiplayer Games. Retrieved March 25, 2022 from http://courses.cms.caltech.edu/cs145/2011/robustgames.pdf
+1. Takuji Iimura, Hiroaki Hazeyama, and Youki Kadobayashi. 2004. Zoned Federation of Game Servers. Proceedings of ACM SIGCOMM 2004 Workshops on NetGames ’04 Network and System Support for Games - SIGCOMM 2004 Workshops (2004). DOI: https://doi.org/10.1145/1016540.1016549
