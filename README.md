@@ -8,7 +8,7 @@ In order to run this on a machine of your own, there are a few things you should
 # Running the Game
 1. Start the server by running `python3 Server_start.py`
 1. Start a client by running `python3 client_start.py` (this can be done on the same machine as the server or another device)
-1. Connect the client to the server by typing the server IP into the client terminal window (it is important to note that the client and server **MUST** be on the same port number.
+1. Connect the client to the server by typing the server IP into the client terminal window (it is important to note that the client and server **MUST** be on the same port number).
 
 # Important Notes
 1. While playing the game, the controls are the arrow keys on your computer.
