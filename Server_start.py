@@ -75,7 +75,7 @@ def data_receiver(client_socket, dict, client_addr, player_colors, lock):
                 lock.acquire()
                 del dict[client_addr]
                 lock.release()
-                print("client disconnected")
+                print("Client disconnected")
             
             # player won - send to all players
             elif(cord_array == "win"):
@@ -90,7 +90,6 @@ def data_receiver(client_socket, dict, client_addr, player_colors, lock):
                 dict[client_addr] = cord_array
                 lock.release()
         except:
-            print("error in data_reciever")
             lock.release()
             break
         
@@ -116,7 +115,6 @@ def handle_client(sock, message, dict, lock):
             time.sleep(.03)
         except:
             lock.release()
-            print("error in handle_client")
             break
 
 if __name__ == '__main__':
