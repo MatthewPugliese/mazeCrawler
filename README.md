@@ -1,6 +1,7 @@
 # mazeCrawler
 Welcome to the source code for our Spring 2022 COSC 465 Computer Networking Final Project Artifact. Here we designed an online game where players race to finish a randomly generated maze as fast as they can.
 
+
 # Getting Started
 In order to run this on a machine of your own, there are a few things you should know. First, **this project is written entirely in python version 3.** Also, you'll have to install the code to a local directory and a few packages that the code depends on including:
 1. Pygame: to install run `pip3 install pygame` in your terminal
